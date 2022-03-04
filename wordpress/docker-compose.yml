@@ -13,7 +13,9 @@ services:
 #      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: toor
-      MYSQL_DATABASE: testdb
+      MYSQL_USER: ${USER_NAME}
+      MYSQL_PASSWORD: ${USER_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
     networks:
       - backend
     volumes:
@@ -31,3 +33,21 @@ services:
     networks:
       - backend
       - frontend
+  
+  wordpress:
+    image: wordpress:latest
+    restart: always
+    ports:
+      - 80:80
+    environment:
+      WORDPRESS_DB_HOST: database
+      WORDPRESS_DB_USER: ${USER_NAME}
+      WORDPRESS_DB_PASSWORD: ${USER_PASS}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+    depends_on:
+      - database
+    networks:
+      - backend
+      - frontend
+    volumes: 
+      - D:\formation\docker\ynov\volumes\wordpress:/var/www/html
