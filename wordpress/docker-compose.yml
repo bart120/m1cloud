@@ -51,3 +51,8 @@ services:
       - frontend
     volumes: 
       - D:\formation\docker\ynov\volumes\wordpress:/var/www/html
+
+  pink:
+    build: helloworld/
+    ports:
+      - 8081:80
