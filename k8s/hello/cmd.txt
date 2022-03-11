@@ -1,0 +1,8 @@
+helm repo add nginx-stable https://helm.nginx.com/stable
+
+helm repo update
+
+kubectl create namespace my-ingress
+
+helm install nginx-ingress nginx-stable/nginx-ingress --namespace my-ingress --set controller.replicaCount=2
+
