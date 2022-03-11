@@ -1,0 +1,36 @@
+#DEPLOYMENT
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-deployment
+  labels:
+    app: green
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: green-pod
+  template:
+    metadata:
+      labels:
+        app: green-pod
+    spec:
+      containers:
+      - image: httpd:latest
+        name: green-cont
+        ports:
+        - containerPort: 80
+---
+#SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: green-service
+spec:
+  selector:
+    app: green-pod
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80
+  type: LoadBalancer
