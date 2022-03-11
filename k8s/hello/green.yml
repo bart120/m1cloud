@@ -16,7 +16,7 @@ spec:
         app: green-pod
     spec:
       containers:
-      - image: httpd:latest
+      - image: traxtopelle/hellogreen:latest
         name: green-cont
         ports:
         - containerPort: 80
