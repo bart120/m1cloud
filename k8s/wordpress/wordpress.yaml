@@ -1,0 +1,216 @@
+# dans un namespace "press"
+# deploiement de 1 pod d'une base de données mysql (attention, on parle d'une base de données!!!!!!)
+# deploiement de 3 pods wordpress
+# service d'accès à mysql interne au cluster
+# service d'accès à l'application wordpress depuis l'extérieur
+
+# namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: press
+
+---
+#volume
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-volume-claim
+  namespace: press
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+#deployment mysql
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  namespace: press
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-pod
+  template:
+    metadata:
+      labels:
+        app: mysql-pod
+    spec:
+      containers:
+      - image: mysql:5.7
+        name: mysql-cont
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: bob
+        - name: MYSQL_DATABASE
+          value: wordpress
+        - name: MYSQL_USER
+          value: wpuser
+        - name: MYSQL_PASSWORD
+          value: wppassword
+        ports:
+        - containerPort: 3306
+          name: mysql-port
+        volumeMounts:
+        - name: mysql-volume
+          mountPath: /var/lib/mysql
+        resources:
+            requests:
+              memory: 300Mi
+              cpu: 250m
+            limits:
+              memory: 500Mi
+              cpu: 500m
+      volumes:
+      - name: mysql-volume
+        persistentVolumeClaim:
+          claimName: mysql-volume-claim
+      restartPolicy: Always
+
+---
+#service mysql
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: press
+spec:
+  selector:
+    app: mysql-pod
+  ports:
+    - port: 3306
+      targetPort: 3306
+  type: ClusterIP
+
+#---
+#endpoint
+#apiVersion: v1
+#kind: Endpoints
+#matadata:
+#  name: mysql-service
+#subsets:
+#  - adresses:
+#    - ip: 10.1.0.90  
+#    ports:
+#    - port: 3306
+
+---
+#deployment wordpress
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  namespace: press
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress-pod
+  template:
+    metadata:
+      labels:
+        app: wordpress-pod
+    spec:
+      containers:
+      - name: wordpress-cont
+        image: wordpress:latest
+        ports:
+          - containerPort: 80
+        env: 
+        - name: WORDPRESS_DB_NAME
+          value: wordpress
+        - name: WORDPRESS_DB_HOST
+          value: mysql-service
+        - name: WORDPRESS_DB_PASSWORD
+          value: wppassword
+        - name: WORDPRESS_DB_USER
+          value: wpuser
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 100m
+          limits:
+            memory: 200Mi
+            cpu: 200m
+      restartPolicy: Always
+      
+---
+#service wordpress
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+  namespace: press
+spec:
+  selector:
+    app: wordpress-pod
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
+
+---
+#deployment myadmin
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myadmin-deployment
+  namespace: press
+  labels:
+    app: myadmin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myadmin-pod
+  template:
+    metadata:
+      labels:
+        app: myadmin-pod
+    spec:
+      containers:
+      - name: myadmin-cont
+        image: phpmyadmin:latest
+        ports:
+          - containerPort: 80
+        env: 
+        - name: MYSQL_ROOT_PASSWORD
+          value: bob
+        - name: PMA_HOST
+          value: mysql-service
+        - name: PMA_ABSOLUTE_URI
+          value: http://localhost/myadmin/
+        #resources:
+        #  requests:
+        #    memory: 100Mi
+        #    cpu: 100m
+        #  limits:
+        #    memory: 200Mi
+        #    cpu: 200m
+      restartPolicy: Always
+
+---
+#service myadmin
+apiVersion: v1
+kind: Service
+metadata:
+  name: myadmin-service
+  namespace: press
+spec:
+  selector:
+    app: myadmin-pod
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
+
+
