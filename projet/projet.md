@@ -128,9 +128,8 @@ Les horaires de passage des groupes sont les suivants:
 - 10h30: CHATILLON Aurélien, SHAKIBAEI Mohammad-reza, KOZIOR Arthur
 - 11h30: AYEM Sonia, BOUDHRIOUA GABTNI Zaineb
 - 12h: NGINDU Gérard, RAVELOSON Adrien, FAKOUE MFOUAPON Arouna
-- 12h30: BRUYEZ Bastien, LACOMBE Samy
-- 14h30: CHARLON Owain, KREPA Tom
-- 15h: TAPIA BRAVO Rodrigo, FOFANA Djenabou, NOAH NKOA Emmanuel
-- 15h30: DUMOULIN Nicolas, MROIVILI Idris, DIOP Diadji, MAATOUG Mohamed
+- 12h30: BRUYEZ Bastien, LACOMBE Samy, CHARLON Owain, KREPA Tom
+- 14h30: TAPIA BRAVO Rodrigo, FOFANA Djenabou, NOAH NKOA Emmanuel
+- 15h: DUMOULIN Nicolas, MROIVILI Idris, DIOP Diadji, MAATOUG Mohamed
 
 Pour ceux dont le groupe n'est pas dans la liste, contactez-moi très rapidement à vincent.leclerc@ynov.com
